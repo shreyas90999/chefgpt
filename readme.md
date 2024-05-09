@@ -1,6 +1,7 @@
 # chefGPT
 ![chefGPT](assets/chefgpt.jpeg)
-FYI a lot of code is borrowed from https://github.com/karpathy/nanoGPT
+## FYI 
+A lot of code is borrowed from https://github.com/karpathy/nanoGPT
 ## Motivation behind this project
 Everyday I use to spend a lot of time thinking about what should I make for dinner with avaliable ingridents. So I thought why not just train a GPT for suggesting me recipies.😝😝 Just joking!!
 
