@@ -5,6 +5,8 @@ import tiktoken
 from datasets import load_dataset ,Dataset # huggingface datasets
 import re 
 import json
+from PIL import Image
+import io
 # number of workers in .map() call
 # good number to use is ~order number of cpu cores // 2
 num_proc = 8
@@ -14,7 +16,19 @@ num_proc = 8
 num_proc_load_dataset = num_proc
 enc = tiktoken.get_encoding("gpt2")
 
-
+# Function to process images of ingredients
+def process_image(image_path):
+    # Open the image file
+    with open(image_path, 'rb') as image_file:
+        image_bytes = image_file.read()
+    # Convert to an Image object
+    image = Image.open(io.BytesIO(image_bytes))
+    # Resize and/or apply any necessary preprocessing
+    image = image.resize((128, 128))  # Example resize, adjust as needed
+    # Convert back to bytes
+    image_bytes = io.BytesIO()
+    image.save(image_bytes, format='JPEG')
+    return image_bytes.getvalue()
 
 if __name__ == '__main__':
     # load the dataset
