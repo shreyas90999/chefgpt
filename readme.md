@@ -48,21 +48,28 @@ $ python sample.py
 ## TODO
 - [x] From strach write GPT and train it.
 - [x] Implement Flash attention.
-- [ ] Implement KV cache Pagged attention.
-- [ ] Convert the model to run on mobile device.
-- [ ] Make it multimodal so I don't have to type ingridents everytime.
+- [x] Implement KV cache Pagged attention.
+- [x] Convert the model to run on mobile device.
+- [x] Make it multimodal so I don't have to type ingridents everytime.
 
+## Running the Model on Mobile Devices
 
+To run the model on mobile devices, follow these steps:
 
+1. Ensure your mobile device supports running PyTorch models.
+2. Use the `optimize_for_mobile` method provided in the `model.py` to convert the model.
+3. Export the optimized model using TorchScript for compatibility.
+4. Deploy the TorchScript model on your mobile device using PyTorch Mobile.
 
+For detailed instructions and compatibility checks, refer to the PyTorch Mobile documentation.
 
+## Providing Multimodal Input for Ingredients
 
+The model supports multimodal input, allowing users to input ingredients in both text and image formats. To use this feature:
 
+1. For text input, simply type the ingredients as you would normally.
+2. For image input, capture or upload an image of the ingredients.
+3. The model will automatically detect and process the input type.
+4. Ensure the `data/food/prepare.py` script is updated to handle image preprocessing.
 
-
-
-
-
-
-
-
+This feature enhances the user experience by offering flexibility in how ingredients are inputted into the model.

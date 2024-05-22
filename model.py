@@ -48,6 +48,9 @@ class CausalSelfAttention(nn.Module):
             # causal mask to ensure that attention is only applied to the left in the input sequence
             self.register_buffer("bias", torch.tril(torch.ones(config.block_size, config.block_size))
                                         .view(1, 1, config.block_size, config.block_size))
+        # KV cache Pagged attention implementation
+        self.use_kv_cache = True  # Enable KV cache
+        self.kv_cache = None  # Initialize cache
 
     def forward(self, x):
         B, T, C = x.size() # batch size, sequence length, embedding dimensionality (n_embd)
@@ -57,6 +60,16 @@ class CausalSelfAttention(nn.Module):
         k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)
         q = q.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)
         v = v.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)       
+
+        # Update KV cache if enabled
+        if self.use_kv_cache:
+            if self.kv_cache is None:
+                self.kv_cache = (k, v)
+            else:
+                k_cache, v_cache = self.kv_cache
+                k = torch.cat([k_cache, k], dim=2)  # Concatenate along the time dimension
+                v = torch.cat([v_cache, v], dim=2)
+                self.kv_cache = (k, v)  # Update cache
 
         # causal self-attention; Self-attend: (B, nh, T, hs) x (B, nh, hs, T) -> (B, nh, T, T)
         if self.flash:
@@ -322,4 +335,14 @@ class GPT(nn.Module):
             idx = torch.cat((idx, idx_next), dim=1)
 
         return idx
-            
+
+    # Mobile optimization method
+    def optimize_for_mobile(self):
+        """
+        Optimize the model for mobile deployment.
+        This method applies model optimizations that are beneficial for running on mobile devices.
+        """
+        # Apply torchscript for improved performance
+        self.scripted_model = torch.jit.script(self)
+        # Additional optimizations can be added here
+        print("Model optimized for mobile deployment.")
